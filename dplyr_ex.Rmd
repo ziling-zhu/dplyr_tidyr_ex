@@ -1,0 +1,124 @@
+---
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(untidydata)
+?mtcars
+
+glimpse(mtcars)
+
+#select() function: select columns
+mtcars %>% select()
+
+select(mtcars, mpg, drat, cyl)
+select(mtcars, wt:carb)
+select(mtcars, hello_world = mpg)
+select(mtcars, starts_with("d"))
+
+mtcars %>% filter()
+filter(mtcars, mpg < 20 & mpg > 14)
+filter(mtcars, cyl == 6)
+filter(mtcars, mpg > 20 | disp < 200)
+
+arrange(mtcars, desc(hp))
+
+mtcars %>%
+  select(., mpg) %>%
+  mutate(., mpg_x2 = mpg * 2)
+
+mean(mtcars$mpg)
+
+mtcars %>% 
+  select(., mpg) %>% 
+  mutate(., mpg_c = mpg - mean(mpg))
+
+mtcars %>% 
+  select(., mpg) %>% 
+  mutate(., value = if_else(mpg >= 18, "good", "bad"))
+
+mtcars %>% 
+  summarize(., mean_mpg = mean(mpg))
+
+mtcars %>% 
+  group_by(., cyl) %>% 
+  summarize(., mean_mpg = mean(mpg))
+
+mtcars %>% 
+  group_by(., cyl) %>% 
+  summarize(., mean_mpg = mean(mpg),
+            sd_mpg = sd(mpg),
+            min_mpg = min(mpg),
+            max_mpg = max(mpg)) %>% 
+  knitr::kable()
+
+
+
+
+
+
+
+
+
+
+
+# tidyr
+
+pre_post
+# 4 columns, 2 variables?, 2 observations per row
+
+#separate()
+pre_post %>%
+  separate(spec, c("spec1", "spec2"))
+
+pre_post %>% 
+  separate(.,
+           col = spec,
+           into = c("group", "cond"),
+           sep = "_")
+
+#unite()
+pre_post %>% 
+  unite("new", c("id", "spec"), sep = "_")
+
+pre_post %>% 
+  unite(.,
+        col = "new",
+        c("id", "spec"),
+        sep = "_")
+
+#pivot_longer() wide to long
+#test1 and test2 as one variable
+pre_post %>% 
+  pivot_longer(.,
+               cols = c("test1", "test2"),
+               names_to = "test",
+               values_to = "score") %>% 
+  ggplot(., aes(x = test, y = score)) +
+    geom_boxplot()
+
+#test1 and test2 as variables in different columns
+pre_post %>% 
+  ggplot(., aes(x = test1, y = test2)) +
+  geom_point() +
+  geom_smooth(method = lm)
+
+
+#pivot_wider() long to wide
+language_diversity %>% 
+  pivot_wider(names_from = Measurement,
+              values_from = Value) %>%
+  ggplot(., aes(x = log(Population), y = Langs, label = Country)) +
+    geom_point() + 
+    geom_text() +
+    geom_smooth(method = "glm", method.args = list(family = "poisson"))
+```
+
+
+
+
+
+
+
+
